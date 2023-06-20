@@ -2,9 +2,7 @@
 <a name="readme-top"></a>
 <div align="center">
 
-[![Contributors][contributors-shield]][contributors-url]
-
-[![LinkedIn][linkedin-shield]][linkedin-url]
+[![Contributors][contributors-shield]][contributors-url] [![LinkedIn][linkedin-shield]][linkedin-url]
 
 </div>
 
