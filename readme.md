@@ -198,7 +198,7 @@ Project Link: [https://github.com/mriffey1/lorcana-scraper](https://github.com/m
 
 
 <!-- MARKDOWN LINKS & IMAGES -->
-<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links 
+<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 [contributors-shield]: https://img.shields.io/github/contributors/mriffey1/lorcana-scraper.svg?style=for-the-badge
 [contributors-url]: https://github.com/mriffey1/lorcana-scraper/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/mriffey1/lorcana-scraper.svg?style=for-the-badge
@@ -228,4 +228,3 @@ Project Link: [https://github.com/mriffey1/lorcana-scraper](https://github.com/m
 [Bootstrap-url]: https://getbootstrap.com
 [JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
 [JQuery-url]: https://jquery.com
--->
