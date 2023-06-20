@@ -1,13 +1,13 @@
 
 <a name="readme-top"></a>
-
 <div align="center">
-  
-<!-- PROJECT SHIELDS -->
-[![Contributors][contributors-shield]][contributors-url]
+
+[![Contributors][contributors-shield][contributors-url]
+
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
 </div>
+
 <h3 align="center">Lorcana Web Scraper</h3>
 
   <p align="center">
