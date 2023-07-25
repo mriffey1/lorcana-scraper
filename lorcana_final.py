@@ -10,9 +10,8 @@ import datetime as datetime
 import mysql.connector
 import utils_lorcana
 
-
 dbhost, dbusername, dbpassword, dbname = utils_lorcana.database_stuff()
-
+count = 0
 now = datetime.datetime.today()
 dt_string = now.strftime("%m/%d/%Y %H:%M:%S")
 print("Lorcana started at " + dt_string + "")
@@ -36,42 +35,49 @@ db_connection = mysql.connector.connect(host=dbhost, user=dbusername, password=d
 
 cursor = db_connection.cursor()
 
-select_query = "SELECT url, last_tweet FROM events"
+select_query = "SELECT url, last_tweet, event_time, isPastEvent FROM events WHERE isPastEvent = 0"
 cursor.execute(select_query)
 rows = cursor.fetchall()
 
 for row in rows:
     url = row[0]
-    last_tweet_time = row[1]  # Last tweet time retrieved from the database
-
-    driver.get(url)
-    WebDriverWait(driver, 0.10).until(EC.presence_of_element_located((By.XPATH,"//div[contains(@class, 'page-title')]",)))
+    last_tweet_time = row[1] # Last tweet time retrieved from the database
+    event_time_db = row[2] 
+    isPastEventDB = row[3]
     
-    title_event = driver.find_element(By.XPATH, ".//div[contains(@class, 'page-title')]").text
+    # Checks event time. If 5 minutes or less to the event, it gets marked as a 1 to be excluded moving forward.
+    if (event_time_db - datetime.datetime.now()).total_seconds() <= 300:
+        update_query = "UPDATE events SET isPastEvent = %s WHERE url = %s"
+        cursor.execute(update_query, (1, url))
+        db_connection.commit()
+    else:
+        driver.get(url)
+        
+        WebDriverWait(driver, 0.05).until(EC.presence_of_element_located((By.XPATH,"//div[contains(@class, 'page-title')]",)))
+        
+        title_event = driver.find_element(By.XPATH, ".//div[contains(@class, 'page-title')]").text
+        
+        available_tickets = driver.find_element(By.XPATH,".//div[contains(@id, 'event_detail_ticket_purchase')]//following::p[1]",).text
+        event_datetime = driver.find_element(By.XPATH,".//a[contains(@title, 'Find other events on this day')]",).text
+        event_date = event_datetime.replace(",", "").strip()
     
-    available_tickets = driver.find_element(By.XPATH,".//div[contains(@id, 'event_detail_ticket_purchase')]//following::p[1]",).text
-    
-    event_datetime = driver.find_element(By.XPATH,".//a[contains(@title, 'Find other events on this day')]",).text
+        formatted_ticket_amount = int(available_tickets.replace("Available Tickets: ", "").strip())
+        
+        if formatted_ticket_amount > 0:
+            has_ticket = True
+            print("IT'S GOT TICKETS")
+            if (last_tweet_time is None or (datetime.datetime.now() - last_tweet_time).total_seconds() >= 900 and isPastEventDB == 0):
 
-    event_date = event_datetime.replace(",", "").strip()
+                tweet_message = (str(formatted_ticket_amount) + " available: " + title_event.title())
+                
+                print(tweet_message) # This prints to a log file so that I can monitor for errors and such
+                type_email = "tickets"
+                text_notification.send_email(str(event_date), title_event.title(), str(formatted_ticket_amount), url, type_email,)
 
-    formatted_ticket_amount = int(available_tickets.replace("Available Tickets: ", "").strip())
-    
-    if formatted_ticket_amount > 0:
-        has_ticket = True
-        print("IT'S GOT TICKETS")
-        if (last_tweet_time is None or (datetime.datetime.now() - last_tweet_time).total_seconds() >= 900):
-
-            tweet_message = (str(formatted_ticket_amount) + " available: " + title_event.title())
-            
-            print(tweet_message) # This prints to a log file so that I can monitor for errors and such
-            type_email = "tickets"
-            text_notification.send_email(str(event_date), title_event.title(), str(formatted_ticket_amount), url, type_email,)
-
-            # Update the last tweet time in the database
-            update_query = "UPDATE events SET last_tweet = %s WHERE url = %s"
-            cursor.execute(update_query, (datetime.datetime.now(), url))
-            db_connection.commit()
+                # Update the last tweet time in the database
+                update_query = "UPDATE events SET last_tweet = %s WHERE url = %s"
+                cursor.execute(update_query, (datetime.datetime.now(), url))
+                db_connection.commit()
 
 now = datetime.datetime.today()
 dt_string = now.strftime("%m/%d/%Y %H:%M:%S")
