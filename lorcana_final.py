@@ -9,9 +9,14 @@ import pickle
 import datetime as datetime
 import mysql.connector
 import utils_lorcana
+from utils_lorcana import connect_to_database
 
-dbhost, dbusername, dbpassword, dbname = utils_lorcana.database_stuff()
-count = 0
+# This is all of the database stuff
+db_connection, cursor = connect_to_database()
+select_query = "SELECT url, last_tweet, event_time, isPastEvent FROM events WHERE isPastEvent = 0"
+cursor.execute(select_query)
+rows = cursor.fetchall()
+
 now = datetime.datetime.today()
 dt_string = now.strftime("%m/%d/%Y %H:%M:%S")
 print("Lorcana started at " + dt_string + "")
@@ -31,13 +36,6 @@ for cookie in cookies:
 driver.refresh()
 has_ticket = False
 
-db_connection = mysql.connector.connect(host=dbhost, user=dbusername, password=dbpassword, database=dbname)
-
-cursor = db_connection.cursor()
-
-select_query = "SELECT url, last_tweet, event_time, isPastEvent FROM events WHERE isPastEvent = 0"
-cursor.execute(select_query)
-rows = cursor.fetchall()
 
 for row in rows:
     url = row[0]
@@ -52,7 +50,6 @@ for row in rows:
         db_connection.commit()
     else:
         driver.get(url)
-        
         WebDriverWait(driver, 0.05).until(EC.presence_of_element_located((By.XPATH,"//div[contains(@class, 'page-title')]",)))
         
         title_event = driver.find_element(By.XPATH, ".//div[contains(@class, 'page-title')]").text
