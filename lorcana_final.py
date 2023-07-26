@@ -36,7 +36,6 @@ for cookie in cookies:
 driver.refresh()
 has_ticket = False
 
-
 for row in rows:
     url = row[0]
     last_tweet_time = row[1] # Last tweet time retrieved from the database
