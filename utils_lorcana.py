@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 from selenium import webdriver
 import mysql.connector
+import datetime as datetime
 
 load_dotenv()
 
@@ -26,6 +27,21 @@ def connect_to_database():
     cursor = db_connection.cursor()
     return db_connection, cursor
 
+def fetch_events_to_update(cursor):
+    select_query = "SELECT url, last_tweet, event_time, isPastEvent, event_name FROM events WHERE isPastEvent = 0 ORDER BY event_time ASC"
+    cursor.execute(select_query)
+    return cursor.fetchall()
+
+def update_event_status(cursor, db_connection, url, status):
+    update_query = "UPDATE events SET isPastEvent = %s WHERE url = %s"
+    cursor.execute(update_query, (status, url))
+    db_connection.commit()
+
+def update_last_tweet_time(cursor, db_connection, url):
+    update_query = "UPDATE events SET last_tweet = %s WHERE url = %s"
+    cursor.execute(update_query, (datetime.datetime.now(), url))
+    db_connection.commit()
+    
 def chrome_options():
     options = webdriver.ChromeOptions()
     options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36")
@@ -39,4 +55,5 @@ def chrome_options():
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--window-size=1920,1080")
     options.add_argument("--enable-javascript")
+    options.add_argument('--blink-settings=imagesEnabled=false')
     return options
