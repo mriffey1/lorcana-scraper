@@ -7,7 +7,8 @@ import datetime as datetime
 import mysql.connector
 import utils_lorcana
 from utils_lorcana import connect_to_database
-import requests
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 # This is all of the database stuff
 db_connection, cursor = connect_to_database()
@@ -38,7 +39,7 @@ for row in rows:
         utils_lorcana.update_event_status(cursor, db_connection, url, 1)
     else:
         driver.get(url)
-                
+        WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.XPATH,"//div[contains(@class, 'page-title')]",)))        
         available_tickets = driver.find_element(By.XPATH,".//div[contains(@id, 'event_detail_ticket_purchase')]//following::p[1]",).text
         formatted_ticket_amount = int(available_tickets.replace("Available Tickets: ", "").strip())
       
@@ -47,7 +48,7 @@ for row in rows:
         if formatted_ticket_amount > 0:
             has_ticket = True
             print("IT'S GOT TICKETS")
-            if (last_tweet_time is None or (datetime.datetime.now() - last_tweet_time).total_seconds() >= 900):
+            if (last_tweet_time is None or (datetime.datetime.now() - last_tweet_time).total_seconds() >= 1800):
 
                 tweet_message = (str(formatted_ticket_amount) + " available: " + title_event.title())
                 
