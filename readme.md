@@ -7,8 +7,8 @@
 </div>
 
 > [!CAUTION]
-> Twitter's (X) API service has severely restricted the request limit in the free plan. Due to this change, the project no longer functions as intended.
-> Please see [pricing here](https://developer.x.com/en).
+> *Twitter's (X) API service has severely restricted the request limit in the free plan. Due to this change, the project no longer functions as intended.
+> Please see [pricing here](https://developer.x.com/en).*
 
 <h3 align="center">Lorcana Web Scraper</h3>
 
@@ -18,9 +18,6 @@
 </div>
 
 
-<Warning>
-*bar*
-</Warning>
 
 <!-- TABLE OF CONTENTS -->
 <details>
