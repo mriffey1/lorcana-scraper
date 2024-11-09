@@ -6,6 +6,9 @@
 
 </div>
 
+> [!CAUTION]
+> The twitter (X) API is no longer free for the basic plan and means the core functionality of this project no longer works. 
+
 <h3 align="center">Lorcana Web Scraper</h3>
 
   <p align="center">
@@ -14,6 +17,9 @@
 </div>
 
 
+<Warning>
+*bar*
+</Warning>
 
 <!-- TABLE OF CONTENTS -->
 <details>
